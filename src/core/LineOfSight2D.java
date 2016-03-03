@@ -33,7 +33,7 @@ public class LineOfSight2D extends Observable  {
 		
 	}
 	/**
-	 * 
+	 * Very basic test (not right, to be updated).
 	 * @param origin
 	 * @param edge
 	 * @return
@@ -62,14 +62,14 @@ public class LineOfSight2D extends Observable  {
 		for (Segment2D wall : _listWall) {
 			Segment2D inter1 = line1.intersectWith(wall, false);
 			// No intersection
-			if( line1.start != null || line1.end != null ) {
+			if( inter1.start != null || inter1.end != null ) {
 				System.out.println("line1 blocked by "+wall+" at "+inter1);
 				_listBlocking.add( inter1 );
 				_blocked = true;
 			}
 			Segment2D inter2 = line2.intersectWith(wall, false);
 			// No intersection
-			if( line2.start != null || line2.end != null ) {
+			if( inter2.start != null || inter2.end != null ) {
 				System.out.println("line2 blocked by "+wall+" at "+inter2);
 				_listBlocking.add( inter2 );
 				_blocked = true;

@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -17,13 +19,14 @@ import javax.swing.JPanel;
 
 import core.LineOfSight2D;
 import core.Segment2D;
+import core.Vec2D;
 
 /**
  * 
  * @author snowgoon88@gmail.com
  */
 @SuppressWarnings("serial")
-public class JPlane2D extends JPanel implements Observer {
+public class JPlane2D extends JPanel implements Observer, MouseListener {
 
 	/** Bounds of the model_canvas */
 	double _minX = -1.0, _maxX = 1.0;
@@ -52,6 +55,8 @@ public class JPlane2D extends JPanel implements Observer {
 		
 		listSeg = new ArrayList<JSegment2D>();
 		listPoint = new ArrayList<JPoint2D>();
+		
+		addMouseListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -159,6 +164,14 @@ public class JPlane2D extends JPanel implements Observer {
 		double size = Math.min(_size.width, _size.height);
 		return (int) (size - (y - _minY)/(_maxY-_minY) * size);
 	}
+	private double xModel( int x ) {
+		double size = Math.min(_size.width, _size.height);
+		return x / size * (_maxX-_minX) + _minX;
+	}
+	private double yModel( int y ) {
+		double size = Math.min(_size.width, _size.height);
+		return (size - y) / size * (_maxY-_minY) + _minY;
+	}
 	/** 
 	 * Draw an arc the the center of the circle q
 	 * With starAngle and arcAngle in radian
@@ -172,6 +185,47 @@ public class JPlane2D extends JPanel implements Observer {
 		
 		g.drawArc(x, y, width, height, (int) Math.toDegrees(startAngle),
 				(int) Math.toDegrees(arcAngle));
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// Left -> Change _origin
+		if( e.getButton() == MouseEvent.BUTTON1 ) {
+			int x = e.getX();
+			int y = e.getY();
+//			System.out.println("Mouse x="+x+" y="+y);
+//			System.out.println("Model x="+xModel(x)+" y="+yModel(y));
+			Vec2D newOrig = new Vec2D(Math.round(xModel(x)), Math.round(yModel(y)));
+			System.out.println("Orig="+newOrig);
+			if( _model._targetEdge != null ) {
+				_model.compute(newOrig, _model._targetEdge );
+			}
+		}
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
