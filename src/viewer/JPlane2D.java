@@ -3,13 +3,20 @@
  */
 package viewer;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
+
+import core.LineOfSight2D;
+import core.Segment2D;
 
 /**
  * 
@@ -30,6 +37,9 @@ public class JPlane2D extends JPanel implements Observer {
 	/** Draw a bunch of Points */
 	public ArrayList<JPoint2D> listPoint;
 	
+	/** Model : a LineOfSight */
+	public LineOfSight2D _model;
+	
 	/**
 	 * 
 	 */
@@ -49,13 +59,46 @@ public class JPlane2D extends JPanel implements Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
+		// Rebuild env
+		listSeg.clear();
+		listPoint.clear();
+		
+		for (Segment2D wall : _model._listWall) {
+			listSeg.add( new JSegment2D(wall, Color.BLACK, 3));
+		}
+		for (Segment2D obst : _model._listBlocking) {
+			if( obst.end != null ) {
+				listSeg.add( new JSegment2D(obst, Color.RED, 1));
+			}
+			else if( obst.start != null ) {
+				listPoint.add( new JPoint2D(obst.start, Color.RED, 1));
+			}
+		}
+		if( _model._targetEdge != null && _model._origin != null ) {
+			listSeg.add( new JSegment2D(_model._targetEdge, Color.BLUE, 3));
+			listPoint.add( new JPoint2D(_model._origin, Color.GREEN, 1));
+			if( _model._blocked ) {
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start),
+						Color.MAGENTA, 1));
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.end),
+						Color.MAGENTA, 1));
+			}
+			else {
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start),
+						Color.GREEN, 1));
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.end),
+						Color.GREEN, 1));
+			}
+		}
+		
+		repaint();
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);       
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         _size = this.getSize();
         
@@ -75,6 +118,7 @@ public class JPlane2D extends JPanel implements Observer {
         // All the segments
         for (JSegment2D seg : listSeg) {
 			g.setColor(seg.col);
+			g2.setStroke(new BasicStroke(seg.width));
 			g.drawLine(xWin(seg.segment.start.x),yWin(seg.segment.start.y),
 					xWin(seg.segment.end.x), yWin(seg.segment.end.y));
 		}

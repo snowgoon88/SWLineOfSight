@@ -10,7 +10,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import core.LineOfSight2D;
 import core.Segment2D;
+import core.Vec2D;
 
 import viewer.JPlane2D;
 import viewer.JPoint2D;
@@ -47,7 +49,7 @@ public class TestJPlane {
 		});
 		_frame.setLayout(new BorderLayout());
 		
-		_jPlane = new JPlane2D(-1, 5, -1, 5);
+		_jPlane = new JPlane2D(-5, 5, -5, 5);
 //		_jPlane.listSeg.add(new JSegment2D(
 //				new Segment2D(1, 1, 2, 3),
 //				Color.BLUE, 1));
@@ -56,6 +58,9 @@ public class TestJPlane {
 		
 		_frame.setVisible(true);
 	}
+	/** 
+	 * Tests intersections between 2 segments and dispay results.
+	 */
 	public void showIntersect( Segment2D s1, Segment2D s2) {
 		Segment2D res = s1.intersectWith(s2, false);
 		System.out.println("res="+res);
@@ -72,22 +77,37 @@ public class TestJPlane {
 			_jPlane.listPoint.add( new JPoint2D(
 					res.start, Color.RED, 1));
 		}
-		
 	}
-
+	public void testLoS() {
+		LineOfSight2D los = new LineOfSight2D();
+		
+		// Some Walls
+		los._listWall.add(new Segment2D(0, 1, 0, 2));
+		los._listWall.add(new Segment2D(0, 2, 1, 2));
+		los._listWall.add(new Segment2D(1, 2, 1, 3));
+		los._listWall.add(new Segment2D(1, 3, 0, 3));
+		
+		// MVC components
+		_jPlane._model = los;
+		los.addObserver( _jPlane );
+		
+		//los.compute( new Vec2D(1, 0), new Segment2D(0, 3, 1, 3));
+		los.compute( new Vec2D(1, 0), new Segment2D(1, -1, 1, -2));
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		TestJPlane app = new TestJPlane();
 		
-		app.showIntersect(new Segment2D(1, 1, 3, 2),
-				new Segment2D(2, 0, 0, 3));
+//		app.showIntersect(new Segment2D(1, 1, 3, 2),
+//				new Segment2D(2, 0, 0, 3));
+//		
+//		app.showIntersect(new Segment2D(1, 0, 2, 1),
+//				new Segment2D(1.5, 0.5, 3, 2));
 		
-		app.showIntersect(new Segment2D(1, 0, 2, 1),
-				new Segment2D(1.5, 0.5, 3, 2));
-		while (true) {
-			
+		app.testLoS();
+		while (true) {	
 		}
 	}
 
