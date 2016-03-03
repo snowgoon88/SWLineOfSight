@@ -201,7 +201,38 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 				_model.compute(newOrig, _model._targetEdge );
 			}
 		}
-		
+		// Right -> Change targetEdge
+		else if( e.getButton() == MouseEvent.BUTTON3 ) {
+			double x = xModel(e.getX());
+			double y = yModel(e.getY());
+			System.out.println("Model x="+x+" y="+y);
+			
+			// Nearest bottom-left corner
+			double xc = Math.round(x);
+			double yc = Math.round(y);
+			Segment2D newEdge;
+			// Horizontal if closer along Ox 
+			if( Math.abs(x-xc) > Math.abs(y-yc) ) {
+				if( xc < x ) {
+					newEdge = new Segment2D(xc, yc, xc+1, yc);
+				}
+				else {
+					newEdge = new Segment2D(xc-1, yc, xc, yc);
+				}
+			}
+			else {
+				if( yc < y ) {
+					newEdge = new Segment2D(xc, yc, xc, yc+1);
+				}
+				else {
+					newEdge = new Segment2D(xc, yc-1, xc, yc);
+				}
+			}
+			System.out.println("Edge ="+newEdge);
+			if( _model._origin != null ) {
+				_model.compute(_model._origin, newEdge );
+			}
+		}
 	}
 
 	@Override
