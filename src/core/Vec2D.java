@@ -48,6 +48,10 @@ public class Vec2D {
 		Vec2D res = new Vec2D( this.x-other.x, this.y-other.y);
 		return res;
 	}
+	public Vec2D add( Vec2D other, double lambda) {
+		Vec2D res = new Vec2D( this.x+lambda*other.x, this.y+lambda*other.y);
+		return res;
+	}
 	/**
 	 * Kind of vector product : 3rd composant of vector product
 	 */

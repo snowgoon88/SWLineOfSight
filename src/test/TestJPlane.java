@@ -62,7 +62,7 @@ public class TestJPlane {
 	 * Tests intersections between 2 segments and dispay results.
 	 */
 	public void showIntersect( Segment2D s1, Segment2D s2) {
-		Segment2D res = s1.intersectWith(s2, false);
+		Segment2D res = s1.intersectWith(s2, false).seg;
 		System.out.println("res="+res);
 		_jPlane.listSeg.add(new JSegment2D(
 				s1, Color.BLUE, 1));

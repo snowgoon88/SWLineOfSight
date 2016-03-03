@@ -42,8 +42,8 @@ public class Segment2D {
 	 * - if one point res = (pt,null)
 	 * - if common segment res = (pt1,pt2), oriented as this
 	 */
-	public Segment2D intersectWith( Segment2D other, boolean verb ) {
-		Segment2D res;
+	public Intersection2D intersectWith( Segment2D other, boolean verb ) {
+		Intersection2D res;
 
 		// Express segment as orig+vector
 		Vec2D vec1 = this.end.minus( this.start);
@@ -73,21 +73,21 @@ public class Segment2D {
 			}
 			if( t0 <= 0 ) {
 				if( t1 > 1) {
-					res = new Segment2D( this.start, this.end );
+					res = new Intersection2D( new Segment2D( this.start, this.end ), t0, t1);
 					return res;
 				}
 				else if (t1 > 0 ) {
 					Vec2D iEnd = new Vec2D( this.start.x + t1*vec1.x,
 							this.start.y + t1*vec1.y);
-					res = new Segment2D( this.start, iEnd );
+					res = new Intersection2D( new Segment2D( this.start, iEnd ), t0, t1);
 					return res;
 				}
 				else if (t1 == 0) {
-					res = new Segment2D( this.start, null );
+					res = new Intersection2D( new Segment2D( this.start, null ), t0, t1);
 					return res;
 				}
 				else {
-					res  = new Segment2D(null, null);
+					res  = new Intersection2D( new Segment2D(null, null), t0, t1);
 					return res;
 				}
 			}
@@ -95,13 +95,13 @@ public class Segment2D {
 				Vec2D iStart = new Vec2D(this.start.x+t0*vec1.x,
 						this.start.y+t0*vec1.y);
 				if( t1 > 1) {
-					res = new Segment2D( iStart, this.end );
+					res = new Intersection2D( new Segment2D( iStart, this.end ), t0, t1);
 					return res;
 				}
 				else if (t1 > 0 ) {
 					Vec2D iEnd = new Vec2D( this.start.x + t1*vec1.x,
 							this.start.y + t1*vec1.y);
-					res = new Segment2D( iStart, iEnd );
+					res = new Intersection2D( new Segment2D( iStart, iEnd ), t0, t1);
 					return res;
 				}
 				else if (t1 == 0) {
@@ -115,7 +115,7 @@ public class Segment2D {
 			}
 			else if( t0 == 1) {
 				if( t1 >= t0 ) {
-					res = new Segment2D( this.end, null);
+					res = new Intersection2D( new Segment2D( this.end, null), t0, t1);
 					return res;
 				}
 				else {
@@ -124,13 +124,13 @@ public class Segment2D {
 				}
 			}
 			else {
-				res  = new Segment2D(null, null);
+				res  = new Intersection2D( new Segment2D(null, null), -1, -1);
 				return res;
 			}
 		}
 		// parallel and no intersect
 		else if( vp21 == 0 && vpO21V1 != 0) {
-			res  = new Segment2D(null, null);
+			res  = new Intersection2D( new Segment2D(null, null), -1, -1);
 			return res;
 		}
 		// possible intersection as( vp21 != 0 )
@@ -142,12 +142,12 @@ public class Segment2D {
 			if( (t >= 0) && (t <= 1) && (u >= 0) && (u <= 1)) {
 				Vec2D pt = new Vec2D( this.start.x + t*vec1.x,
 						this.start.y + t*vec1.y);
-				res = new Segment2D( pt, null );
+				res = new Intersection2D( new Segment2D( pt, null ), t, u);
 				return res;
 			}
 			// no intersection
 			else {
-				res  = new Segment2D(null, null);
+				res  = new Intersection2D( new Segment2D(null, null), t, u);
 				return res;
 			}
 		}

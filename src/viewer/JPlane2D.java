@@ -87,11 +87,15 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 						Color.MAGENTA, 1));
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.end),
 						Color.MAGENTA, 1));
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
+						Color.MAGENTA, 1));
 			}
 			else {
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start),
 						Color.GREEN, 1));
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.end),
+						Color.GREEN, 1));
+				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
 						Color.GREEN, 1));
 			}
 		}
