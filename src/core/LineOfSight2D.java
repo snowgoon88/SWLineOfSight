@@ -9,8 +9,10 @@ import java.util.Observable;
 /**
  * Compute Line Of Sight
  * 
+ * Idea : translate Wall to the inside by a very small amount.
  * @author snowgoon88@gmail.com
  */
+
 public class LineOfSight2D extends Observable  {
 
 	public ArrayList<Segment2D> _listWall;
@@ -19,6 +21,7 @@ public class LineOfSight2D extends Observable  {
 	public ArrayList<Segment2D> _listBlocking;
 	public boolean _blocked = false;
 		
+	static double _DELTA_WALL = 0.000001;
 	
 	/**
 	 * 
@@ -119,5 +122,20 @@ public class LineOfSight2D extends Observable  {
 		setChanged();
 		notifyObservers();
 		return !_blocked;
+	}
+	
+	/**
+	 * Add a wall that has a solid impassable material at its left.
+	 */
+	public void addThickWall( double sx, double sy, double ex, double ey ) {
+		Vec2D start = new Vec2D( sx, sy);
+		Vec2D end = new Vec2D( ex, ey );
+		// orthonormal vector
+		Vec2D orth = new Vec2D( -(ey-sy), (ex-sx));
+		orth = orth.normed();
+		// add translated Wall
+		Segment2D wall = new Segment2D(start.add(orth, _DELTA_WALL), end.add(orth, _DELTA_WALL));
+		_listWall.add( wall );
+		System.out.println("ADD thickWall "+wall);
 	}
 }

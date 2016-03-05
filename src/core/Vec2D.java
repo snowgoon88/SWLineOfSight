@@ -64,4 +64,15 @@ public class Vec2D {
 	public double dotProduct( Vec2D other ) {
 		return this.x * other.x + this.y * other.y;
 	}
+	/**
+	 * Return normed vector.
+	 */
+	public Vec2D normed() {
+		Vec2D res = new Vec2D( this );
+		double norm = Math.sqrt( res.dotProduct(res) );
+		System.out.println("v="+res+" norm="+norm);
+		res.x = res.x / norm;
+		res.y = res.y / norm;
+		return res;
+	}
 }

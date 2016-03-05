@@ -82,10 +82,27 @@ public class TestJPlane {
 		LineOfSight2D los = new LineOfSight2D();
 		
 		// Some Walls
-		los._listWall.add(new Segment2D(0, 1, 0, 2));
-		los._listWall.add(new Segment2D(0, 2, 1, 2));
-		los._listWall.add(new Segment2D(1, 2, 1, 3));
-		los._listWall.add(new Segment2D(1, 3, 0, 3));
+//		los._listWall.add(new Segment2D(0, 1, 0, 2));
+//		los._listWall.add(new Segment2D(0, 2, 1, 2));
+//		los._listWall.add(new Segment2D(1, 2, 1, 3));
+//		los._listWall.add(new Segment2D(1, 3, 0, 3));
+		
+		los.addThickWall(0, -3, 0, -2);
+		los.addThickWall(0, -2, 0, -1);
+		los.addThickWall(0, -1, -1, -1);
+		los.addThickWall(-1, -1, -2, -1);
+		
+		los.addThickWall(-2, 1, -1, 1);
+		los.addThickWall(-1, 1, -1, 2);
+		los.addThickWall(-1, 2, -1, 3);
+		
+		for (int i = 3; i > -4; i--) {
+			los.addThickWall(2, i, 2, i-1);
+		}
+		los.addThickWall(3, 3, 2, 3);
+		
+		// Wall without thickness
+		los._listWall.add( new Segment2D(0, -1, 0, 0));
 		
 		// MVC components
 		_jPlane._model = los;
