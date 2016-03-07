@@ -20,6 +20,8 @@ public class LineOfSight2D extends Observable  {
 	public Vec2D _origin = null;
 	public ArrayList<Segment2D> _listBlocking;
 	public boolean _blocked = false;
+	
+	public Vec2D _cellStart = null;
 		
 	static double _DELTA_WALL = 0.000001;
 	
@@ -35,6 +37,37 @@ public class LineOfSight2D extends Observable  {
 	public void initWalls() {
 		
 	}
+	public boolean compute( Cell2D cell, Segment2D edge) {
+		boolean res = false;
+		_cellStart = cell._origin;
+		// Check the 4 corners of the Cell
+		for (int i = 0; i < cell._corners.length; i++) {
+			Vec2D pt = cell._corners[i];
+			System.out.println("__FROM pt="+pt);
+			// Valid direction if blocked
+			if( cell._blocked[i] ) {
+				Vec2D dir1 = edge.start.minus(pt).normed();
+				if( dir1.dotProduct(Cell2D._vec[i]) < 0.70710678118 ) {
+					System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(Cell2D._vec[i]));
+					continue;
+				}
+				Vec2D dir2 = edge.end.minus(pt).normed();
+				if( dir2.dotProduct(Cell2D._vec[i]) < 0.70710678118 ) {
+					System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(Cell2D._vec[i]));
+					continue;
+				}
+			}
+			// test segment
+			res = compute( pt, edge );
+			if( res ) {
+				setChanged();
+				notifyObservers();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Very basic test (not right, to be updated).
 	 * @param origin

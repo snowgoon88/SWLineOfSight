@@ -8,3 +8,8 @@ except from corner (0,-1).
 Some tests in src/test
 
 - src/test/TestJPlane : use left button to change the origin point, right button to change the target edge in a BASIC test that does not check the source of "intersection".
+
+## Todo
+* DONE Detect problematic Corners in Cells
+* DONE Compute from one Cell to a Segment2D
+* TODO Compute from one Cell to another.

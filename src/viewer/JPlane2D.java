@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
+import core.Cell2D;
 import core.LineOfSight2D;
 import core.Segment2D;
 import core.Vec2D;
@@ -39,9 +41,14 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 	public ArrayList<JSegment2D> listSeg;
 	/** Draw a bunch of Points */
 	public ArrayList<JPoint2D> listPoint;
+	/** Draw Cell Start */
+	JPoint2D _cellStart = null;
 	
 	/** Model : a LineOfSight */
 	public LineOfSight2D _model;
+	
+	/** Size of a cell marker */
+	final double CW = 0.2;
 	
 	/**
 	 * 
@@ -89,6 +96,9 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 						Color.MAGENTA, 1));
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
 						Color.MAGENTA, 1));
+				if( _model._cellStart != null ) {
+					_cellStart = new JPoint2D(_model._cellStart, Color.MAGENTA, 2);
+				}
 			}
 			else {
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start),
@@ -97,8 +107,13 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 						Color.GREEN, 1));
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
 						Color.GREEN, 1));
+				if( _model._cellStart != null ) {
+					_cellStart = new JPoint2D(_model._cellStart, Color.GREEN, 2);
+				}
 			}
 		}
+		
+		
 		
 		repaint();
 	}
@@ -137,6 +152,13 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 			drawArc(g, point.pt.x, point.pt.y,
 					0.05, 0, Math.PI*2);
 		}
+        
+        // Cells
+        if( _cellStart != null ) {
+        	g.setColor(_cellStart.col);
+        	g2.setStroke(new BasicStroke(_cellStart.width));
+        	drawCell(g, _cellStart.pt);
+        }
     }
 	
 	/**
@@ -149,7 +171,16 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 				xWin(posX+0.05), yWin(posY) );
 		g.drawLine(xWin(posX),yWin(posY-0.05),
 				xWin(posX), yWin(posY+0.05) );
-		
+	}
+	/**
+	 * Draw a Cell center.
+	 */
+	private void drawCell(Graphics g, Vec2D cellOrig ) {
+		Vec2D c = cellOrig.add(new Vec2D(1,1), 0.5);
+		g.drawLine( xWin(c.x+CW), yWin(c.y), xWin(c.x), yWin(c.y+CW));
+		g.drawLine( xWin(c.x), yWin(c.y+CW), xWin(c.x-CW), yWin(c.y));
+		g.drawLine( xWin(c.x-CW), yWin(c.y), xWin(c.x), yWin(c.y-CW));
+		g.drawLine( xWin(c.x), yWin(c.y-CW), xWin(c.x+CW), yWin(c.y));
 	}
 	
 	/**
@@ -235,6 +266,27 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 			System.out.println("Edge ="+newEdge);
 			if( _model._origin != null ) {
 				_model.compute(_model._origin, newEdge );
+			}
+		}
+		// Middle : find Cell
+		else if( e.getButton() == MouseEvent.BUTTON2 ) {
+			// to get SHIFT modifier
+//			if( (e.getModifiersEx() & InputEvent.BUTTON2_DOWN_MASK) != 0 ) {
+//				if( e.isShiftDown()) {
+//					
+//				}
+//			}
+			double x = xModel(e.getX());
+			double y = yModel(e.getY());
+			
+			Cell2D cell = new Cell2D( new Vec2D(Math.floor(x), Math.floor(y)));
+			System.out.println("********");
+			System.out.println("Cell "+cell);
+			cell.findPbCorners( _model._listWall );
+			System.out.println("Corner "+cell);
+			
+			if( _model._targetEdge != null ) {
+				_model.compute(cell, _model._targetEdge );
 			}
 		}
 	}

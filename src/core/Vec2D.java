@@ -42,6 +42,12 @@ public class Vec2D {
 	}
 	
 	/**
+	 * Comparaison.
+	 */
+	public boolean isNear( Vec2D other ) {
+		return Math.abs(other.x - this.x) < 0.1 && Math.abs(other.y - this.y) < 0.1;
+	}
+	/**
 	 * Basic operation
 	 */
 	public Vec2D minus( Vec2D other) {
