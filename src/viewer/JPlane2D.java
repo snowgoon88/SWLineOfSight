@@ -41,8 +41,9 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 	public ArrayList<JSegment2D> listSeg;
 	/** Draw a bunch of Points */
 	public ArrayList<JPoint2D> listPoint;
-	/** Draw Cell Start */
+	/** Draw Cell Start and End*/
 	JPoint2D _cellStart = null;
+	JPoint2D _cellEnd = null;
 	
 	/** Model : a LineOfSight */
 	public LineOfSight2D _model;
@@ -97,7 +98,7 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
 						Color.MAGENTA, 1));
 				if( _model._cellStart != null ) {
-					_cellStart = new JPoint2D(_model._cellStart, Color.MAGENTA, 2);
+					_cellStart = new JPoint2D(_model._cellStart._origin, Color.MAGENTA, 2);
 				}
 			}
 			else {
@@ -108,9 +109,13 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 				listSeg.add( new JSegment2D(new Segment2D(_model._origin, _model._targetEdge.start.add(_model._targetEdge.end.minus(_model._targetEdge.start), 0.5)),
 						Color.GREEN, 1));
 				if( _model._cellStart != null ) {
-					_cellStart = new JPoint2D(_model._cellStart, Color.GREEN, 2);
+					_cellStart = new JPoint2D(_model._cellStart._origin, Color.GREEN, 2);
 				}
 			}
+		}
+		// Cell End
+		if( _model._cellEnd != null ) {
+			_cellEnd = new JPoint2D(_model._cellEnd._origin, Color.BLUE, 2);
 		}
 		
 		
@@ -158,6 +163,11 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
         	g.setColor(_cellStart.col);
         	g2.setStroke(new BasicStroke(_cellStart.width));
         	drawCell(g, _cellStart.pt);
+        }
+        if( _cellEnd != null ) {
+        	g.setColor(_cellEnd.col);
+        	g2.setStroke(new BasicStroke(_cellEnd.width));
+        	drawCell(g, _cellEnd.pt);
         }
     }
 	
@@ -270,24 +280,32 @@ public class JPlane2D extends JPanel implements Observer, MouseListener {
 		}
 		// Middle : find Cell
 		else if( e.getButton() == MouseEvent.BUTTON2 ) {
-			// to get SHIFT modifier
-//			if( (e.getModifiersEx() & InputEvent.BUTTON2_DOWN_MASK) != 0 ) {
-//				if( e.isShiftDown()) {
-//					
-//				}
-//			}
 			double x = xModel(e.getX());
 			double y = yModel(e.getY());
 			
 			Cell2D cell = new Cell2D( new Vec2D(Math.floor(x), Math.floor(y)));
-			System.out.println("********");
-			System.out.println("Cell "+cell);
 			cell.findPbCorners( _model._listWall );
-			System.out.println("Corner "+cell);
 			
-			if( _model._targetEdge != null ) {
-				_model.compute(cell, _model._targetEdge );
-			}
+			// to get SHIFT modifier
+			int onmask = MouseEvent.SHIFT_DOWN_MASK;
+			System.out.println("__MOD ="+e.getModifiersEx()+" shift="+MouseEvent.SHIFT_DOWN_MASK + " bt2="+MouseEvent.BUTTON2_MASK);
+		    if ((e.getModifiersEx() & onmask) == onmask) {
+		    	System.out.println("********");
+				System.out.println("__END " + cell);
+				_model._cellEnd = cell;
+				
+		    }
+		    else {// else no Shift
+		    	System.out.println("********");
+		    	System.out.println("__START "+cell);
+//		    	cell.findPbCorners( _model._listWall );
+//		    	System.out.println("Corner "+cell);
+		    	_model._cellStart = cell;
+		    }
+		    if( _model._cellStart != null && _model._cellEnd != null) {
+	    		_model.compute(_model._cellStart, _model._cellEnd );
+	    	}
+			return;
 		}
 	}
 

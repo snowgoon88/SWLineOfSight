@@ -12,4 +12,4 @@ Some tests in src/test
 ## Todo
 * DONE Detect problematic Corners in Cells
 * DONE Compute from one Cell to a Segment2D
-* TODO Compute from one Cell to another.
+* DONE Compute from one Cell to another.

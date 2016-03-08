@@ -21,7 +21,8 @@ public class LineOfSight2D extends Observable  {
 	public ArrayList<Segment2D> _listBlocking;
 	public boolean _blocked = false;
 	
-	public Vec2D _cellStart = null;
+	public Cell2D _cellStart = null;
+	public Cell2D _cellEnd = null;
 		
 	static double _DELTA_WALL = 0.000001;
 	
@@ -37,9 +38,67 @@ public class LineOfSight2D extends Observable  {
 	public void initWalls() {
 		
 	}
+	public boolean compute( Cell2D start, Cell2D end ) {
+		boolean res = false;
+		_cellStart = start;
+		_cellEnd = end;
+		
+		// for every segment of the end Cell
+		for (int idEnd = 0; idEnd < end._corners.length; idEnd++) {
+			// for every corner of the start Cell
+			int idEnd1 = idEnd;
+			int idEnd2 = (idEnd+1) % end._corners.length;
+			Segment2D edge = new Segment2D(end._corners[idEnd1], end._corners[idEnd2]);
+			System.out.println("**** SEGMENT : "+edge);
+			for (int idStart = 0; idStart < start._corners.length; idStart++) {
+				Vec2D pt = start._corners[idStart];
+				System.out.println("**** __PT="+pt);
+				// Valid directions from start
+				if( start._blocked[idStart] ) {
+					Vec2D dir1 = edge.start.minus(pt).normed();
+					if( dir1.dotProduct(Cell2D._vec[idStart]) < 0.70710678118 ) {
+						System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(Cell2D._vec[idStart]));
+						continue;
+					}
+					Vec2D dir2 = edge.end.minus(pt).normed();
+					if( dir2.dotProduct(Cell2D._vec[idStart]) < 0.70710678118 ) {
+						System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(Cell2D._vec[idStart]));
+						continue;
+					}
+				}
+				// Valid direction to end1
+				if( end._blocked[idEnd1] ) {
+					Vec2D dir3 = pt.minus(edge.start).normed();
+					if( dir3.dotProduct(Cell2D._vec[idEnd1]) < 0.70710678118 ) {
+						System.out.println("__DIR3="+dir3+" wrong angle at cos="+dir3.dotProduct(Cell2D._vec[idEnd1]));
+						continue;
+					}
+				}
+				// Valid direction to end2
+				if( end._blocked[idEnd2] ) {
+					Vec2D dir4 = pt.minus(edge.end).normed();
+					if( dir4.dotProduct(Cell2D._vec[idEnd2]) < 0.70710678118 ) {
+						System.out.println("__DIR4="+dir4+" wrong angle at cos="+dir4.dotProduct(Cell2D._vec[idEnd1]));
+						continue;
+					}
+				}
+				// test segment
+				res = compute( pt, edge );
+				System.out.println("__los = "+res);
+				if( res ) {
+					setChanged();
+					notifyObservers();
+					return true;
+				}
+			}
+		}
+		setChanged();
+		notifyObservers();
+		return false;
+	}
 	public boolean compute( Cell2D cell, Segment2D edge) {
 		boolean res = false;
-		_cellStart = cell._origin;
+		_cellStart = cell;
 		// Check the 4 corners of the Cell
 		for (int i = 0; i < cell._corners.length; i++) {
 			Vec2D pt = cell._corners[i];
@@ -65,6 +124,8 @@ public class LineOfSight2D extends Observable  {
 				return true;
 			}
 		}
+		setChanged();
+		notifyObservers();
 		return false;
 	}
 	
