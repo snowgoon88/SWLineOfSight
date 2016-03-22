@@ -56,29 +56,29 @@ public class LineOfSight2D extends Observable  {
 				// Valid directions from start
 				if( start._blocked[idStart] ) {
 					Vec2D dir1 = edge.start.minus(pt).normed();
-					if( dir1.dotProduct(Cell2D._vec[idStart]) < 0.70710678118 ) {
-						System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(Cell2D._vec[idStart]));
+					if( dir1.dotProduct(start._dirBlocked[idStart]) < start._valCosAngle[idStart] ) {
+						System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(start._dirBlocked[idStart])+" cosMax="+start._valCosAngle[idStart]);
 						continue;
 					}
 					Vec2D dir2 = edge.end.minus(pt).normed();
-					if( dir2.dotProduct(Cell2D._vec[idStart]) < 0.70710678118 ) {
-						System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(Cell2D._vec[idStart]));
+					if( dir2.dotProduct(start._dirBlocked[idStart]) < start._valCosAngle[idStart] ) {
+						System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(start._dirBlocked[idStart])+" cosMax="+start._valCosAngle[idStart]);
 						continue;
 					}
 				}
 				// Valid direction to end1
 				if( end._blocked[idEnd1] ) {
 					Vec2D dir3 = pt.minus(edge.start).normed();
-					if( dir3.dotProduct(Cell2D._vec[idEnd1]) < 0.70710678118 ) {
-						System.out.println("__DIR3="+dir3+" wrong angle at cos="+dir3.dotProduct(Cell2D._vec[idEnd1]));
+					if( dir3.dotProduct(end._dirBlocked[idEnd1]) < end._valCosAngle[idEnd1] ) {
+						System.out.println("__DIR3="+dir3+" wrong angle at cos="+dir3.dotProduct(end._dirBlocked[idEnd1])+" cosMax="+end._valCosAngle[idEnd1]);
 						continue;
 					}
 				}
 				// Valid direction to end2
 				if( end._blocked[idEnd2] ) {
 					Vec2D dir4 = pt.minus(edge.end).normed();
-					if( dir4.dotProduct(Cell2D._vec[idEnd2]) < 0.70710678118 ) {
-						System.out.println("__DIR4="+dir4+" wrong angle at cos="+dir4.dotProduct(Cell2D._vec[idEnd1]));
+					if( dir4.dotProduct(end._dirBlocked[idEnd2]) < end._valCosAngle[idEnd2] ) {
+						System.out.println("__DIR4="+dir4+" wrong angle at cos="+dir4.dotProduct(end._dirBlocked[idEnd2])+" cosMax="+end._valCosAngle[idEnd2]);
 						continue;
 					}
 				}
@@ -106,13 +106,13 @@ public class LineOfSight2D extends Observable  {
 			// Valid direction if blocked
 			if( cell._blocked[i] ) {
 				Vec2D dir1 = edge.start.minus(pt).normed();
-				if( dir1.dotProduct(Cell2D._vec[i]) < 0.70710678118 ) {
-					System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(Cell2D._vec[i]));
+				if( dir1.dotProduct(cell._dirBlocked[i]) < cell._valCosAngle[i] ) {
+					System.out.println("__DIR1="+dir1+" wrong angle at cos="+dir1.dotProduct(cell._dirBlocked[i])+" cosMax="+cell._valCosAngle[i]);
 					continue;
 				}
 				Vec2D dir2 = edge.end.minus(pt).normed();
-				if( dir2.dotProduct(Cell2D._vec[i]) < 0.70710678118 ) {
-					System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(Cell2D._vec[i]));
+				if( dir2.dotProduct(cell._dirBlocked[i]) < cell._valCosAngle[i] ) {
+					System.out.println("__DIR2="+dir2+" wrong angle at cos="+dir2.dotProduct(cell._dirBlocked[i])+" cosMax="+cell._valCosAngle[i]);
 					continue;
 				}
 			}

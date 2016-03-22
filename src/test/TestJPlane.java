@@ -103,6 +103,7 @@ public class TestJPlane {
 		
 		// Wall without thickness
 		los._listWall.add( new Segment2D(0, -1, 0, 0));
+		los._listWall.add( new Segment2D(0, 0, 0, 1));
 		
 		// MVC components
 		_jPlane._model = los;
