@@ -7,7 +7,9 @@ except from corner (0,-1).
 
 Some tests in src/test
 
-- src/test/TestJPlane : use left button to change the origin point, right button to change the target edge in a BASIC test that does not check the source of "intersection".
+* src/test/TestJPlane
+** use left button to change the origin point, right button to change the target edge in a BASIC test that does not check the source of "intersection".
+** use midButton to select origin Cell and SHIFT+midButton to select destination Cell 
 
 ## Todo
 * DONE Detect problematic Corners in Cells
